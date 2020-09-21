@@ -16,29 +16,63 @@ $(document).ready(function(){
         event.preventDefault;
         console.log($("#searchTermEntry").val());
         targetCity = $("#searchTermEntry").val();
-        var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + `${targetCity}&appid=${APIKEY}`;
-
-        //call ajax on click
+        var targetCityLon = "";
+        var targetCityLat = "";
+        
+        // ajax for current weather API
         $.ajax({
             method: "GET",
-            url: queryURL        
-        }).then(function(result){
-            console.log(result);
+            url: "http://api.openweathermap.org/data/2.5/weather?q=" + `${targetCity}&appid=${APIKEY}`        
+        }).then(function(currentResponse){
+            console.log(currentResponse);
 
             // fill main weather pane
-            $("#currentWeatherCity").text(result.name); // city name label
+            $("#currentWeatherCity").text(currentResponse.name); // city name label
+            // current date here
+            $("#currentWeatherIcon").attr("src", `https://openweathermap.org/img/wn/${currentResponse.weather[0].icon}@2x.png`); // weather icon
 
-            $("#currentWeatherIcon").attr("src", `https://openweathermap.org/img/wn/${result.weather[0].icon}@2x.png`);
+            $("#currentTempSpan").html(`${tempKtoC(currentResponse.main.temp)}&deg;C`); // current temperature
+            $("#currentHumiditySpan").text(`${currentResponse.main.humidity}%`); // current humidity
+            $("#currentWindSpan").text(`${currentResponse.wind.speed}m/s`); // current wind
 
-            $("#currentTempSpan").html(`${tempKtoC(result.main.temp)}&deg;C`);
-            $("#currentHumiditySpan").text(`${result.main.humidity}%`);
-            $("#currentWindSpan").text(`${result.wind.speed}m/s`);
-            $("#currentUVSpan").text();
+            //get target coords for UV call
+            targetCityLon = currentResponse.coord.lon;
+            targetCityLat = currentResponse.coord.lat;
 
-            // fill five-day forecast panes
+            // ajax for current UV index API call
+            $.ajax({
+                method: "GET",
+                url: "http://api.openweathermap.org/data/2.5/uvi?appid=" + `${APIKEY}&lat=${targetCityLat}&lon=${targetCityLon}`
+            }).then(function(UVresponse){
+                console.log(UVresponse);
+
+                // fill current weather UV span
+                $("#currentUVSpan").text(UVresponse.value);
+                var UVunit = parseInt(UVresponse.value);
+                console.log(UVunit);
+                // color UV display according to rating
+                if (UVunit <= 2){
+                    // #97D700
+                    $("#currentUVSpan").css("background-color", "#97D700");
+                } else if (UVunit >= 3 && UVunit <= 5 ){
+                    // #FCE300
+                    $("#currentUVSpan").css("background-color", "#FCE300");
+                } else if (UVunit >= 6 && UVunit <= 7){
+                    // #FF8200
+                    $("#currentUVSpan").css("background-color", "#FF8200");
+                } else if (UVunit >= 8 && UVunit <= 10){
+                    // #EF3340
+                    $("#currentUVSpan").css("background-color", "#EF3340");
+                } else if (UVunit >= 11){
+                    // #9063CD
+                    $("#currentUVSpan").css("background-color", "#9063CD");
+                }
+            });
         });
 
 
+
+        // ajax for 5-day forecast API call
 
         //add current search to sidebar
         var newRecentSearchLI = $("<li>");
