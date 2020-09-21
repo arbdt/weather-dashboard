@@ -29,16 +29,19 @@
             <button type="button" class="btn btn-submit" id="searchButton">🔍</button>
         </form>
         <hr>
-        <div id="resultList" class="btn-group-vertical"> <!-- list of previous searches -->
-            <!-- search results go here for access later -->
-        </div>
+        <div class="card"> <!-- hold list of previous searches -->
+            <h4 class="card-header">Recent Locations:</h4>
+            <ul id="resultList" class="list-group list-group-flush"> <!-- the list -->
+                <!-- search results go here for access later -->
+            </ul>
+          </div>
     </aside>
 
     <main class="dashboard col-9"> <!-- weather information display area -->
         <section id="currentWeatherPane" class="card m-5"> <!-- weather data for current / most recent location-->
             <div class="card-body">
             <h2 id="currentWeatherHeading" class="card-title">
-                <span id="currentWeatherCity">City Name</span> &nbsp; <span id="currentWeatherDate"></span> &nbsp; <span id="currentWeatherIcon"></span>
+                <span id="currentWeatherCity">City Name</span> &nbsp; <span id="currentWeatherDate"></span> &nbsp; <img id="currentWeatherIcon"></img>
             </h2>
             <p id="currentTempLine">Temperature: <span id="currentTempSpan"></span></p>
             <p id="currentHumidityLine">Humidity: <span id="currentHumiditySpan"></span></p>

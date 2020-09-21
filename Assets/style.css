@@ -1,7 +1,12 @@
 header {
     background-color: black;
     color: white;
-}
+    text-align: center;
+    padding: 10px;
+}/*
 #sideMenu {
     background-color: lightgrey;
+}*/
+#sideMenu ul li {
+    list-style: none;
 }
