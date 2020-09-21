@@ -25,8 +25,8 @@
     <aside id="sideMenu" class="sidebar col-3">
         <h3>Enter a City Name:</h3>
         <form id="searchForm" class="form-group form-inline"> <!-- search box -->
-            <input type="text" id="searchTermEntry" class="form-control">
-            <button type="button" class="btn btn-submit" id="searchButton">🔍</button>
+            <input type="text" id="searchTermEntry" class="form-control"> &nbsp;
+            <button type="button" class="btn btn-primary" id="searchButton">🔍</button>
         </form>
         <hr>
         <div class="card"> <!-- hold list of previous searches -->
@@ -38,7 +38,8 @@
     </aside>
 
     <main class="dashboard col-9"> <!-- weather information display area -->
-        <section id="currentWeatherPane" class="card m-5"> <!-- weather data for current / most recent location-->
+        <div class="row">
+        <section id="currentWeatherPane" class="card m-5 col-12"> <!-- weather data for current / most recent location-->
             <div class="card-body">
             <h2 id="currentWeatherHeading" class="card-title">
                 <span id="currentWeatherCity">City Name</span> &nbsp; <span id="currentWeatherDate"></span> &nbsp; <img id="currentWeatherIcon"></img>
@@ -49,11 +50,13 @@
             <p id="currentUVLine">UV Index: <span id="currentUVSpan"></span></p>
             </div>
         </section>
-
-        <section> <!-- 5-day forcasts -->
-            <h3>5-Day Forecast:</h3>
+        </div>
+        <div class="row">
+        <section class="card m-5 col-12"> <!-- 5-day forcasts -->
+            <div class="card-body">
+            <h3 class="card-title">5-Day Forecast</h3>
             <div class="row">
-                <div id="fiveDayOne" class="fiveDayPane card m-5"> <!-- day 1 -->
+                <div id="fiveDayOne" class="fiveDayPane card m-3"> <!-- day 1 -->
                     <div class="card-body">
                         <h4 class="card-title fiveDayDate"></h4>
                         <p class="fiveDayIcon"></p>
@@ -61,7 +64,7 @@
                         <p class="fiveDayHumidity"></p>
                     </div>
                 </div>
-                <div id="fiveDayTwo" class="fiveDayPane card m-5"> <!-- day 2 -->
+                <div id="fiveDayTwo" class="fiveDayPane card m-3"> <!-- day 2 -->
                     <div class="card-body">
                         <h4 class="card-title fiveDayDate"></h4>
                         <p class="fiveDayIcon"></p>
@@ -69,7 +72,7 @@
                         <p class="fiveDayHumidity"></p>
                     </div>
                 </div>
-                <div id="fiveDayThree" class="fiveDayPane card m-5"> <!-- day 3 -->
+                <div id="fiveDayThree" class="fiveDayPane card m-3"> <!-- day 3 -->
                     <div class="card-body">
                         <h4 class="card-title fiveDayDate"></h4>
                         <p class="fiveDayIcon"></p>
@@ -77,7 +80,7 @@
                         <p class="fiveDayHumidity"></p>
                     </div>
                 </div>
-                <div id="fiveDayFour" class="fiveDayPane card m-5"> <!-- day 4 -->
+                <div id="fiveDayFour" class="fiveDayPane card m-3"> <!-- day 4 -->
                     <div class="card-body">
                         <h4 class="card-title fiveDayDate"></h4>
                         <p class="fiveDayIcon"></p>
@@ -85,7 +88,7 @@
                         <p class="fiveDayHumidity"></p>
                     </div>
                 </div>
-                <div id="fiveDayFive" class="fiveDayPane card m-5"> <!-- day 5 -->
+                <div id="fiveDayFive" class="fiveDayPane card m-3"> <!-- day 5 -->
                     <div class="card-body">
                         <h4 class="card-title fiveDayDate"></h4>
                         <p class="fiveDayIcon"></p>
@@ -93,6 +96,7 @@
                         <p class="fiveDayHumidity"></p>
                     </div>
                 </div>
+            </div>
             </div>
         </section>
 

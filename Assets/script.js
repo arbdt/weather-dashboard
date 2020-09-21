@@ -28,9 +28,7 @@ $(document).ready(function(){
 
             // fill main weather pane
             $("#currentWeatherCity").text(currentResponse.name); // city name label
-            // current date here
             $("#currentWeatherIcon").attr("src", `https://openweathermap.org/img/wn/${currentResponse.weather[0].icon}@2x.png`); // weather icon
-
             $("#currentTempSpan").html(`${tempKtoC(currentResponse.main.temp)}&deg;C`); // current temperature
             $("#currentHumiditySpan").text(`${currentResponse.main.humidity}%`); // current humidity
             $("#currentWindSpan").text(`${currentResponse.wind.speed}m/s`); // current wind
@@ -50,35 +48,42 @@ $(document).ready(function(){
                 $("#currentUVSpan").text(UVresponse.value);
                 var UVunit = parseInt(UVresponse.value);
                 console.log(UVunit);
-                // color UV display according to rating
+                // color UV display according to official UV Index categories
                 if (UVunit <= 2){
-                    // #97D700
+                    // Low Index
                     $("#currentUVSpan").css("background-color", "#97D700");
                 } else if (UVunit >= 3 && UVunit <= 5 ){
-                    // #FCE300
+                    // Moderate Index
                     $("#currentUVSpan").css("background-color", "#FCE300");
                 } else if (UVunit >= 6 && UVunit <= 7){
-                    // #FF8200
+                    // High Index
                     $("#currentUVSpan").css("background-color", "#FF8200");
+                    $("#currentUVSpan").css("color", "#FFFFFF");
                 } else if (UVunit >= 8 && UVunit <= 10){
-                    // #EF3340
+                    // Very High
                     $("#currentUVSpan").css("background-color", "#EF3340");
+                    $("#currentUVSpan").css("color", "#FFFFFF");
                 } else if (UVunit >= 11){
-                    // #9063CD
+                    // Extreme
                     $("#currentUVSpan").css("background-color", "#9063CD");
+                    $("#currentUVSpan").css("color", "#FFFFFF");
                 }
+
+                // get current date from UV API call
+                $("#currentWeatherDate").text(dateYMDtoDMY(UVresponse.date_iso));
             });
         });
 
 
 
         // ajax for 5-day forecast API call
+        // api.openweathermap.org/data/2.5/forecast?q={city name}&appid={your api key}
 
         //add current search to sidebar
         var newRecentSearchLI = $("<li>");
         newRecentSearchLI.attr("class", "list-group-item")
         $("#resultList").append(newRecentSearchLI);
-        var newRecentSearchLink = $("<a href=\"\"></a>");
+        var newRecentSearchLink = $("<a href=\"\#\"></a>");
         newRecentSearchLink.text(targetCity);
         newRecentSearchLink.attr("data-city",targetCity);
         newRecentSearchLink.attr("class","recentSearchItem");
@@ -96,5 +101,14 @@ $(document).ready(function(){
     function tempKtoC(Ktemp){
         var Ctemp = Ktemp - 273.15;
         return Math.floor(Ctemp);
+    }
+    // rearrange date
+    function dateYMDtoDMY(dateYMD){
+        var dateParts = dateYMD.split("-");
+        var dateDay = dateParts[2].substr(0,2);
+        var dateMonth = dateParts [1];
+        var dateYear = dateParts[0];
+        var dateDMY = `${dateDay}\/${dateMonth}\/${dateYear}`;
+        return dateDMY;
     }
 });
