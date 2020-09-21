@@ -6,7 +6,7 @@
     <title>Weather Dashboard</title>
     <!-- link to Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <!-- link ti custom CSS -->
+    <!-- link to custom CSS -->
     <link rel="stylesheet" href="./Assets/style.css" type="text/css">
     <!-- link to JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -26,11 +26,12 @@
         <h3>Enter a City Name:</h3>
         <form id="searchForm" class="form-group form-inline"> <!-- search box -->
             <input type="text" id="searchTermEntry" class="form-control">
-            <button type="submit" class="btn btn-submit">🔍</button>
+            <button type="button" class="btn btn-submit" id="searchButton">🔍</button>
         </form>
-        <ol id="resultList"> <!-- list of previous searches -->
+        <hr>
+        <div id="resultList" class="btn-group-vertical"> <!-- list of previous searches -->
             <!-- search results go here for access later -->
-        </ol>
+        </div>
     </aside>
 
     <main class="dashboard col-9"> <!-- weather information display area -->
@@ -48,20 +49,47 @@
 
         <section> <!-- 5-day forcasts -->
             <h3>5-Day Forecast:</h3>
-            <div id="fiveDayOne" class="fiveDayPane card"> <!-- day 1 -->
-
-            </div>
-            <div id="fiveDayTwo" class="fiveDayPane card"> <!-- day 2 -->
-
-            </div>
-            <div id="fiveDayThree" class="fiveDayPane card"> <!-- day 3 -->
-
-            </div>
-            <div id="fiveDayFour" class="fiveDayPane card"> <!-- day 4 -->
-
-            </div>
-            <div id="fiveDayFive" class="fiveDayPane card"> <!-- day 5 -->
-
+            <div class="row">
+                <div id="fiveDayOne" class="fiveDayPane card m-5"> <!-- day 1 -->
+                    <div class="card-body">
+                        <h4 class="card-title fiveDayDate"></h4>
+                        <p class="fiveDayIcon"></p>
+                        <p class="fiveDayTemp"></p>
+                        <p class="fiveDayHumidity"></p>
+                    </div>
+                </div>
+                <div id="fiveDayTwo" class="fiveDayPane card m-5"> <!-- day 2 -->
+                    <div class="card-body">
+                        <h4 class="card-title fiveDayDate"></h4>
+                        <p class="fiveDayIcon"></p>
+                        <p class="fiveDayTemp"></p>
+                        <p class="fiveDayHumidity"></p>
+                    </div>
+                </div>
+                <div id="fiveDayThree" class="fiveDayPane card m-5"> <!-- day 3 -->
+                    <div class="card-body">
+                        <h4 class="card-title fiveDayDate"></h4>
+                        <p class="fiveDayIcon"></p>
+                        <p class="fiveDayTemp"></p>
+                        <p class="fiveDayHumidity"></p>
+                    </div>
+                </div>
+                <div id="fiveDayFour" class="fiveDayPane card m-5"> <!-- day 4 -->
+                    <div class="card-body">
+                        <h4 class="card-title fiveDayDate"></h4>
+                        <p class="fiveDayIcon"></p>
+                        <p class="fiveDayTemp"></p>
+                        <p class="fiveDayHumidity"></p>
+                    </div>
+                </div>
+                <div id="fiveDayFive" class="fiveDayPane card m-5"> <!-- day 5 -->
+                    <div class="card-body">
+                        <h4 class="card-title fiveDayDate"></h4>
+                        <p class="fiveDayIcon"></p>
+                        <p class="fiveDayTemp"></p>
+                        <p class="fiveDayHumidity"></p>
+                    </div>
+                </div>
             </div>
         </section>
 
