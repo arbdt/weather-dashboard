@@ -6,6 +6,8 @@ $(document).ready(function(){
     //API components
     const APIKEY = "8f6847d25cfbaf48f56f29eac435ee01";
     var targetCity = "";
+    var targetCityLon = "";
+    var targetCityLat = "";
     
     //function to retrieve from local storage on load
     function retrievePastSearches(){
@@ -15,7 +17,7 @@ $(document).ready(function(){
                 //add past list to sidebar
                 var newRecentSearchLI = $("<li>");
                 newRecentSearchLI.attr("class", "list-group-item")
-                $("#resultList").append(newRecentSearchLI);
+                $("#resultList").prepend(newRecentSearchLI);
                 var newRecentSearchLink = $("<a href=\"\#\"></a>");
                 newRecentSearchLink.text(cityList[i]);
                 newRecentSearchLink.attr("data-city",cityList[i]);
@@ -38,29 +40,44 @@ $(document).ready(function(){
         event.preventDefault;
         console.log($("#searchTermEntry").val());
         targetCity = $("#searchTermEntry").val();
-        var targetCityLon = "";
-        var targetCityLat = "";
         
-        // ajax for current weather API
+        // call ajax for current weather API
+        getCurrentWeatherData(targetCity);        
+    });
+
+    //function to get current weather for selected location
+    function getCurrentWeatherData(cityName){
         $.ajax({
             method: "GET",
-            url: "https://api.openweathermap.org/data/2.5/weather?q=" + `${targetCity}&appid=${APIKEY}`        
+            url: "https://api.openweathermap.org/data/2.5/weather?q=" + `${cityName}&appid=${APIKEY}`        
         }).then(function(currentResponse){
             console.log(currentResponse);
 
             //add current search to sidebar
-            var newRecentSearchLI = $("<li>");
-            newRecentSearchLI.attr("class", "list-group-item")
-            $("#resultList").append(newRecentSearchLI);
-            var newRecentSearchLink = $("<a href=\"\#\"></a>");
-            newRecentSearchLink.text(targetCity);
-            newRecentSearchLink.attr("data-city",targetCity);
-            newRecentSearchLink.attr("class","recentSearchItem");
-            newRecentSearchLI.append(newRecentSearchLink);
-
-            // update local storage
-            cityList.push(targetCity);
-            savePastSearches();
+            // first check if a matching entry is already there
+            var alreadyInList = false;
+            for (var a = 0; a < $("#resultList").children().length; a++){
+                var existingEntry = $("#resultList").children().get(a).textContent;
+                if (existingEntry === cityName){
+                    console.log(`${existingEntry} already in list`);
+                    alreadyInList = true;
+                }
+            }
+            // if not there already, add it in
+            if (alreadyInList === false){
+                var newRecentSearchLI = $("<li>");
+                newRecentSearchLI.attr("class", "list-group-item")
+                $("#resultList").prepend(newRecentSearchLI);
+                var newRecentSearchLink = $("<a href=\"\#\"></a>");
+                newRecentSearchLink.text(cityName);
+                newRecentSearchLink.attr("data-city",cityName);
+                newRecentSearchLink.attr("class","recentSearchItem");
+                newRecentSearchLI.append(newRecentSearchLink);
+            
+                // update local storage
+                cityList.push(cityName);
+                savePastSearches();
+            }
 
             // fill main weather pane
             $("#currentWeatherCity").text(currentResponse.name); // city name label
@@ -73,60 +90,68 @@ $(document).ready(function(){
             targetCityLon = currentResponse.coord.lon;
             targetCityLat = currentResponse.coord.lat;
 
-            // ajax for current UV index API call
-            $.ajax({
-                method: "GET",
-                url: "https://api.openweathermap.org/data/2.5/uvi?appid=" + `${APIKEY}&lat=${targetCityLat}&lon=${targetCityLon}`
-            }).then(function(UVresponse){
-                console.log(UVresponse);
-
-                // fill current weather UV span
-                $("#currentUVSpan").text(UVresponse.value);
-                var UVunit = parseInt(UVresponse.value);
-                console.log(UVunit);
-                // color UV display according to official UV Index categories
-                if (UVunit <= 2){
-                    // Low Index
-                    $("#currentUVSpan").css("background-color", "#97D700");
-                    $("#currentUVSpan").css("color", "#000000");
-                } else if (UVunit >= 3 && UVunit <= 5 ){
-                    // Moderate Index
-                    $("#currentUVSpan").css("background-color", "#FCE300");
-                    $("#currentUVSpan").css("color", "#000000");
-                } else if (UVunit >= 6 && UVunit <= 7){
-                    // High Index
-                    $("#currentUVSpan").css("background-color", "#FF8200");
-                    $("#currentUVSpan").css("color", "#FFFFFF");
-                } else if (UVunit >= 8 && UVunit <= 10){
-                    // Very High
-                    $("#currentUVSpan").css("background-color", "#EF3340");
-                    $("#currentUVSpan").css("color", "#FFFFFF");
-                } else if (UVunit >= 11){
-                    // Extreme
-                    $("#currentUVSpan").css("background-color", "#9063CD");
-                    $("#currentUVSpan").css("color", "#FFFFFF");
-                }
-
-                // get current date from UV API call
-                $("#currentWeatherDate").text(dateYMDtoDMY(UVresponse.date_iso));
-            });
+            // call ajax for current UV index API
+            getUVIndex(targetCityLat,targetCityLon);
         });
+    }
 
-        // ajax for 5-day forecast API call
-        // api.openweathermap.org/data/2.5/forecast?q={city name}&appid={your api key}
+    //function to get UV index for selected location
+    function getUVIndex(latitude, longitude){
+        $.ajax({
+            method: "GET",
+            url: "https://api.openweathermap.org/data/2.5/uvi?appid=" + `${APIKEY}&lat=${latitude}&lon=${longitude}`
+        }).then(function(UVresponse){
+            console.log(UVresponse);
+
+            // fill current weather UV span
+            $("#currentUVSpan").text(UVresponse.value);
+            var UVunit = parseInt(UVresponse.value);
+            console.log(UVunit);
+
+            // color UV display according to official UV Index categories
+            if (UVunit <= 2){
+                // Low Index
+                $("#currentUVSpan").css("background-color", "#97D700");
+                $("#currentUVSpan").css("color", "#000000");
+            } else if (UVunit >= 3 && UVunit <= 5 ){
+                // Moderate Index
+                $("#currentUVSpan").css("background-color", "#FCE300");
+                $("#currentUVSpan").css("color", "#000000");
+            } else if (UVunit >= 6 && UVunit <= 7){
+                // High Index
+                $("#currentUVSpan").css("background-color", "#FF8200");
+                $("#currentUVSpan").css("color", "#FFFFFF");
+            } else if (UVunit >= 8 && UVunit <= 10){
+                // Very High
+                $("#currentUVSpan").css("background-color", "#EF3340");
+                $("#currentUVSpan").css("color", "#FFFFFF");
+            } else if (UVunit >= 11){
+                // Extreme
+                $("#currentUVSpan").css("background-color", "#9063CD");
+                $("#currentUVSpan").css("color", "#FFFFFF");
+            }
+
+            // get current date from UV API call
+            $("#currentWeatherDate").text(dateYMDtoDMY(UVresponse.date_iso));
+        });
+    }
+
+    // function to get 5-day forecast for selected location
+    // api.openweathermap.org/data/2.5/forecast?q={city name}&appid={your api key}
+    function getFiveDayForecast(){
         $.ajax({
             method: "GET",
             url: `https://api.openweathermap.org/data/2.5/forecast/?q=` +`${targetCity}&cnt=5&appid=${APIKEY}`
         }).then(function(fiveDayResponse){
             console.log(fiveDayResponse);
-        }); 
-        
-    });
+        });
+    }
 
     // function to re-display data for previous search results by clicking on entry in search result list
-    $(".recentSearchItem").on("click", function(){
+    $(".recentSearchItem").click(function(){
         event.preventDefault;
-        console.log(`clicked on ${this.data-city}`);
+        console.log(`clicked on ${this.dataset.city}`);
+        getCurrentWeatherData(this.dataset.city);
     });
 
     //temperature conversion
