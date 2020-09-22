@@ -2,14 +2,36 @@ $(document).ready(function(){
 
     //variables here
     var cityStorage = localStorage;
+    var cityList= [];
     //API components
     const APIKEY = "8f6847d25cfbaf48f56f29eac435ee01";
     var targetCity = "";
     
-
     //function to retrieve from local storage on load
+    function retrievePastSearches(){
+        if (cityStorage.getItem("pastWeatherCities") != undefined){
+            cityList = JSON.parse(cityStorage.getItem("pastWeatherCities"));
+            for (var i = 0; i < cityList.length; i++){
+                //add past list to sidebar
+                var newRecentSearchLI = $("<li>");
+                newRecentSearchLI.attr("class", "list-group-item")
+                $("#resultList").append(newRecentSearchLI);
+                var newRecentSearchLink = $("<a href=\"\#\"></a>");
+                newRecentSearchLink.text(cityList[i]);
+                newRecentSearchLink.attr("data-city",cityList[i]);
+                newRecentSearchLink.attr("class","recentSearchItem");
+                newRecentSearchLI.append(newRecentSearchLink);
+            }
+        }
+    }
+
+    // call storage retrieval
+    retrievePastSearches();
 
     //function to save searches to local storage
+    function savePastSearches(){
+        cityStorage.setItem("pastWeatherCities", JSON.stringify(cityList));
+    }
     
     //search button
     $("#searchButton").on("click",function(){
@@ -22,9 +44,23 @@ $(document).ready(function(){
         // ajax for current weather API
         $.ajax({
             method: "GET",
-            url: "http://api.openweathermap.org/data/2.5/weather?q=" + `${targetCity}&appid=${APIKEY}`        
+            url: "https://api.openweathermap.org/data/2.5/weather?q=" + `${targetCity}&appid=${APIKEY}`        
         }).then(function(currentResponse){
             console.log(currentResponse);
+
+            //add current search to sidebar
+            var newRecentSearchLI = $("<li>");
+            newRecentSearchLI.attr("class", "list-group-item")
+            $("#resultList").append(newRecentSearchLI);
+            var newRecentSearchLink = $("<a href=\"\#\"></a>");
+            newRecentSearchLink.text(targetCity);
+            newRecentSearchLink.attr("data-city",targetCity);
+            newRecentSearchLink.attr("class","recentSearchItem");
+            newRecentSearchLI.append(newRecentSearchLink);
+
+            // update local storage
+            cityList.push(targetCity);
+            savePastSearches();
 
             // fill main weather pane
             $("#currentWeatherCity").text(currentResponse.name); // city name label
@@ -40,7 +76,7 @@ $(document).ready(function(){
             // ajax for current UV index API call
             $.ajax({
                 method: "GET",
-                url: "http://api.openweathermap.org/data/2.5/uvi?appid=" + `${APIKEY}&lat=${targetCityLat}&lon=${targetCityLon}`
+                url: "https://api.openweathermap.org/data/2.5/uvi?appid=" + `${APIKEY}&lat=${targetCityLat}&lon=${targetCityLon}`
             }).then(function(UVresponse){
                 console.log(UVresponse);
 
@@ -52,9 +88,11 @@ $(document).ready(function(){
                 if (UVunit <= 2){
                     // Low Index
                     $("#currentUVSpan").css("background-color", "#97D700");
+                    $("#currentUVSpan").css("color", "#000000");
                 } else if (UVunit >= 3 && UVunit <= 5 ){
                     // Moderate Index
                     $("#currentUVSpan").css("background-color", "#FCE300");
+                    $("#currentUVSpan").css("color", "#000000");
                 } else if (UVunit >= 6 && UVunit <= 7){
                     // High Index
                     $("#currentUVSpan").css("background-color", "#FF8200");
@@ -74,20 +112,14 @@ $(document).ready(function(){
             });
         });
 
-
-
         // ajax for 5-day forecast API call
         // api.openweathermap.org/data/2.5/forecast?q={city name}&appid={your api key}
-
-        //add current search to sidebar
-        var newRecentSearchLI = $("<li>");
-        newRecentSearchLI.attr("class", "list-group-item")
-        $("#resultList").append(newRecentSearchLI);
-        var newRecentSearchLink = $("<a href=\"\#\"></a>");
-        newRecentSearchLink.text(targetCity);
-        newRecentSearchLink.attr("data-city",targetCity);
-        newRecentSearchLink.attr("class","recentSearchItem");
-        newRecentSearchLI.append(newRecentSearchLink);
+        $.ajax({
+            method: "GET",
+            url: `https://api.openweathermap.org/data/2.5/forecast/?q=` +`${targetCity}&cnt=5&appid=${APIKEY}`
+        }).then(function(fiveDayResponse){
+            console.log(fiveDayResponse);
+        }); 
         
     });
 
