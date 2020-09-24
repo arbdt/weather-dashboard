@@ -92,6 +92,8 @@ $(document).ready(function(){
 
             // call ajax for current UV index API
             getUVIndex(targetCityLat,targetCityLon);
+
+            getFiveDayForecast(cityName);
         });
     }
 
@@ -133,17 +135,59 @@ $(document).ready(function(){
 
             // get current date from UV API call
             $("#currentWeatherDate").text(dateYMDtoDMY(UVresponse.date_iso));
+
+          
         });
     }
 
     // function to get 5-day forecast for selected location
-    // api.openweathermap.org/data/2.5/forecast?q={city name}&appid={your api key}
-    function getFiveDayForecast(){
+    function getFiveDayForecast(location){
+        var fiveDayForecastList = []; // store one entry for each day
         $.ajax({
             method: "GET",
-            url: `https://api.openweathermap.org/data/2.5/forecast/?q=` +`${targetCity}&cnt=5&appid=${APIKEY}`
+            url: `https://api.openweathermap.org/data/2.5/forecast/?q=` +`${location}&appid=${APIKEY}`
         }).then(function(fiveDayResponse){
             console.log(fiveDayResponse);
+            var responseList = fiveDayResponse.list;
+            for (var l = 0; l < responseList.length; l++){ //search through list of forecasts
+                // eventually, update this to get local midday rather than utc midday
+                if (responseList[l].dt_txt.includes("12:00:00")){
+                    fiveDayForecastList.push(responseList[l]); //extract one forecast per day
+                }
+            }
+            console.log(fiveDayForecastList);
+            // display each of the five-day forecasts on the screen
+           for (var f = 0; f < fiveDayForecastList.length; f ++){
+                var fiveDayCardDateTxt = dateYMDtoDMY(fiveDayForecastList[f].dt_txt);
+                var fiveDayCardIconSrc = `https://openweathermap.org/img/wn/${fiveDayForecastList[f].weather[0].icon}@2x.png`;
+                var fiveDayCardTempTxt = `Temp: ${tempKtoC(fiveDayForecastList[f].main.temp)} °C`;
+                var fiveDayCardHumidTxt = `Humidity: ${fiveDayForecastList[f].main.humidity}%`;
+
+                // make html
+                var newFiveDayCard = document.createElement("div");
+                $(newFiveDayCard).attr("class", "fiveDayCard card m-3");
+                $("#fiveDayCardsRow").append(newFiveDayCard);
+                var newFiveDayCardBody = $("<div>");
+                $(newFiveDayCard).append(newFiveDayCardBody);
+                $(newFiveDayCardBody).attr("class", "card-body");
+                // date heading
+                var newFiveDayCardHeading = document.createElement("h4");
+                $(newFiveDayCardHeading).attr("class", "card-title fiveDayDate");
+                $(newFiveDayCardHeading).text(fiveDayCardDateTxt);
+                $(newFiveDayCardBody).append(newFiveDayCardHeading);
+               // weather icon
+                var newFiveDayCardIcon = document.createElement("img");
+                $(newFiveDayCardIcon).attr("src", fiveDayCardIconSrc);
+                $(newFiveDayCardBody).append(newFiveDayCardIcon);
+               // temperature
+                var newFiveDayCardTemp = document.createElement("p");
+                $(newFiveDayCardTemp).text(fiveDayCardTempTxt);
+                $(newFiveDayCardBody).append(newFiveDayCardTemp);
+                // humidity
+                var newFiveDayCardHumidity = document.createElement("p");
+                $(newFiveDayCardHumidity).text(fiveDayCardHumidTxt);
+                $(newFiveDayCardBody).append(newFiveDayCardHumidity);
+           }
         });
     }
 
