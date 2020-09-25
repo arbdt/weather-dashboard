@@ -15,14 +15,11 @@ $(document).ready(function(){
             cityList = JSON.parse(cityStorage.getItem("pastWeatherCities"));
             for (var i = 0; i < cityList.length; i++){
                 //add past list to sidebar
-                var newRecentSearchLI = $("<li>");
-                newRecentSearchLI.attr("class", "list-group-item")
-                $("#resultList").prepend(newRecentSearchLI);
                 var newRecentSearchLink = $("<a href=\"\#\"></a>");
                 newRecentSearchLink.text(cityList[i]);
                 newRecentSearchLink.attr("data-city",cityList[i]);
-                newRecentSearchLink.attr("class","recentSearchItem");
-                newRecentSearchLI.append(newRecentSearchLink);
+                newRecentSearchLink.attr("class","recentSearchItem list-group-item list-group-item-action");
+                $("#resultList").prepend(newRecentSearchLink);
             }
         }
     }
@@ -65,13 +62,10 @@ $(document).ready(function(){
             }
             // if not there already, add it in
             if (alreadyInList === false){
-                var newRecentSearchLI = $("<li>");
-                newRecentSearchLI.attr("class", "list-group-item")
-                $("#resultList").prepend(newRecentSearchLI);
                 var newRecentSearchLink = $("<a href=\"\#\"></a>");
                 newRecentSearchLink.text(cityName);
                 newRecentSearchLink.attr("data-city",cityName);
-                newRecentSearchLink.attr("class","recentSearchItem");
+                newRecentSearchLink.attr("class","recentSearchItem list-group-item list-group-item-action");
                 newRecentSearchLI.append(newRecentSearchLink);
             
                 // update local storage
@@ -142,6 +136,9 @@ $(document).ready(function(){
 
     // function to get 5-day forecast for selected location
     function getFiveDayForecast(location){
+        // clear any existing five-day forecast cards
+        $("#fiveDayCardsRow").empty();
+
         var fiveDayForecastList = []; // store one entry for each day
         $.ajax({
             method: "GET",
