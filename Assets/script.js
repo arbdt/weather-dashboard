@@ -140,12 +140,10 @@ $(document).ready(function(){
             method: "GET",
             url: `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=current,minutely,hourly,alerts&appid=${APIKEY}`
         }).then(function(fiveDayResponse){
-            console.log(fiveDayResponse);
             var  fiveDayForecastList = fiveDayResponse.daily;
             for (var l = 1; l < 6; l++){ //search through list of forecasts and extract five
 
             // display each of the five-day forecasts on the screen
-            console.log(fiveDayForecastList[l].dt);
             var dailyDate = moment(fiveDayForecastList[l].dt,"X");
             var fiveDayCardDateTxt = dailyDate.format("DD/M/YYYY");
             var fiveDayCardIconSrc = `https://openweathermap.org/img/wn/${fiveDayForecastList[l].weather[0].icon}@2x.png`;
